@@ -10,23 +10,26 @@ import java.net.Socket;
 
 public class Server {
     public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(8889)) {
+        String city = "???";
+        try (ServerSocket serverSocket = new ServerSocket(8989)) {
             while (true) {
                 try (Socket clientSocket = serverSocket.accept();
                      PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                      BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-
-                    System.out.println("New connection accepted");
-
-                    out.println("connected");
-
-                    final String name = in.readLine();
-
-                    System.out.printf("Hi %s, your port is %d%n", name, clientSocket.getPort());
+                    out.println(city);
+                    String cityToCheck = in.readLine().toLowerCase();
+                    if (city.equals("???") || cityToCheck.startsWith(String.valueOf(city.charAt(city.length() - 1)))) {
+                        out.println("OK");
+                        city = cityToCheck;
+                    } else {
+                        out.println("NOT OK");
+                    }
+                    System.out.println(city);
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Не могу стартовать сервер");
+            e.printStackTrace();
         }
     }
 }
